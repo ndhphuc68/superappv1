@@ -6,6 +6,7 @@ import {
   Dimensions,
   FlatList,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {Avatar, HStack, Input, VStack} from 'native-base';
@@ -15,18 +16,26 @@ import {getListMessage, sendMessage} from '../../helper/modules/message';
 import {getUsername} from '../../utils/storage';
 import {BASE_URL_IMAGE} from '../../constants';
 
+import messaging from '@react-native-firebase/messaging';
+
 const {width, height} = Dimensions.get('window');
 
 export default function SendMessage({route}) {
-  const DATA = [1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 18, 16, 17, 19];
-
   const {name, toUser, image} = route.params;
 
   const [listMessage, setListMessage] = useState(null);
   const [messageSend, setMessageSend] = useState('');
 
   useEffect(() => {
+    // requestUserPermission();
     handleGetListMessage();
+    const unsubscribe = messaging().onMessage(async remoteMessage => {
+      if (remoteMessage.data.message) {
+        handleGetListMessage();
+      }
+    });
+
+    return unsubscribe;
   }, []);
 
   const handleGetListMessage = async () => {

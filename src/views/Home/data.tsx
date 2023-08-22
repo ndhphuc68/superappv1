@@ -13,37 +13,19 @@ export const menu = [
   },
   {
     title: 'Game',
-    icon: (
-      <Ionicons
-        name="md-game-controller-outline"
-        size={50}
-        color={Colors.white}
-      />
-    ),
+    icon: <Feather name="message-square" size={50} color={Colors.white} />,
     color: '#FFFF33',
     screen: ScreenName.message,
   },
   {
     title: 'AAAAA',
-    icon: (
-      <Ionicons
-        name="md-game-controller-outline"
-        size={50}
-        color={Colors.white}
-      />
-    ),
+    icon: <Feather name="message-square" size={50} color={Colors.white} />,
     color: '#FF9900',
     screen: ScreenName.message,
   },
   {
     title: 'BBBB',
-    icon: (
-      <Ionicons
-        name="md-game-controller-outline"
-        size={50}
-        color={Colors.white}
-      />
-    ),
+    icon: <Feather name="message-square" size={50} color={Colors.white} />,
     color: '#FF99CC',
     screen: ScreenName.message,
   },
