@@ -6,20 +6,25 @@ import {ScreenName} from './modules/ScreenName';
 import Tabbar from './modules/BottomTabNavigator';
 import EditProfile from '../views/Profile/EditProfile';
 import Message from '../views/Message';
+import Calender from '../views/Calender';
 import SendMessage from '../views/Message/SendMessage';
 import {getToken, getUsername} from '../utils/storage';
 import SplashScreen from '../views/SplashScreen';
+import {getInfoApi} from '../helper/modules/user';
+import {useDispatch} from 'react-redux';
+import {setInfoUser} from '../redux/modules/user';
 
 const Stack = createNativeStackNavigator();
 
 export default function Navigation() {
   const [isLogin, setIsLogin] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-
+  const dispatch = useDispatch();
   const getIsLogin = async () => {
     const token = await getToken();
     const username = await getUsername();
     if (token && username) {
+      await handleGetInforUser(username);
       setIsLogin(false);
     } else {
       setIsLogin(true);
@@ -27,6 +32,18 @@ export default function Navigation() {
     setTimeout(() => {
       setIsLoading(false);
     }, 2000);
+  };
+
+  const handleGetInforUser = async (username: string) => {
+    await getInfoApi(username)
+      .then(res => {
+        if (res.success) {
+          dispatch(setInfoUser(res.data));
+        }
+      })
+      .catch(e => {
+        console.log(e);
+      });
   };
 
   useEffect(() => {
@@ -63,6 +80,11 @@ export default function Navigation() {
             options={{headerShown: true}}
             component={Message}
             name={ScreenName.message}
+          />
+          <Stack.Screen
+            options={{headerShown: true}}
+            component={Calender}
+            name={ScreenName.calender}
           />
           <Stack.Screen
             options={({route}) => ({

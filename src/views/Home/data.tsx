@@ -12,10 +12,10 @@ export const menu = [
     screen: ScreenName.message,
   },
   {
-    title: 'Game',
-    icon: <Feather name="message-square" size={50} color={Colors.white} />,
-    color: '#FFFF33',
-    screen: ScreenName.message,
+    title: 'Calender',
+    icon: <Ionicons name="calendar-outline" size={50} color={Colors.white} />,
+    color: '#3D92D1',
+    screen: ScreenName.calender,
   },
   {
     title: 'AAAAA',

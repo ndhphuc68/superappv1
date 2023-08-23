@@ -6,7 +6,6 @@ import {
   Dimensions,
   FlatList,
   TouchableOpacity,
-  Alert,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {Avatar, HStack, Input, VStack} from 'native-base';
@@ -23,7 +22,7 @@ const {width, height} = Dimensions.get('window');
 export default function SendMessage({route}) {
   const {name, toUser, image} = route.params;
 
-  const [listMessage, setListMessage] = useState(null);
+  const [listMessage, setListMessage] = useState([]);
   const [messageSend, setMessageSend] = useState('');
 
   useEffect(() => {
@@ -63,26 +62,45 @@ export default function SendMessage({route}) {
     }
   };
 
-  // const compareTimes = (time1, time2) => {
-  //   const difference = Math.abs(new Date(time1) - new Date(time2));
-  //   const minutes = Math.floor(difference / 60000);
-  //   return minutes < 2;
-  // };
+  const compareTimes = (time1, time2) => {
+    const difference = Math.abs(new Date(time1) - new Date(time2));
+    const minutes = Math.floor(difference / 60000);
+    return minutes < 2;
+  };
 
-  const renderMessageMe = item => {
-    const {message} = item;
+  const renderMessageMe = (item, index) => {
+    const {message, createdAt, username} = item;
+    let marginSize: number = 5;
+    let checkAvatar = false;
+    if (
+      listMessage[index - 1] &&
+      listMessage[index - 1].username === username &&
+      compareTimes(createdAt, listMessage[index - 1].createdAt)
+    ) {
+      marginSize = 1;
+      checkAvatar = true;
+    }
+
+    if (!listMessage[index + 1]) {
+      checkAvatar = true;
+    }
+
     return (
-      <HStack marginBottom={3} alignItems={'flex-end'} space={2}>
-        <Avatar
-          size="sm"
-          bg="green.500"
-          source={
-            image
-              ? {uri: BASE_URL_IMAGE + `${image}`}
-              : require('../../assets/images/happy.png')
-          }>
-          AJ
-        </Avatar>
+      <HStack marginTop={marginSize} alignItems={'flex-end'} space={2}>
+        {checkAvatar ? (
+          <Avatar
+            size="30px"
+            bg="green.500"
+            source={
+              image
+                ? {uri: BASE_URL_IMAGE + `${image}`}
+                : require('../../assets/images/happy.png')
+            }>
+            AJ
+          </Avatar>
+        ) : (
+          <View style={{height: 30, width: 30}} />
+        )}
         <VStack space={1}>
           <View style={styles.message}>
             <Text>{message}</Text>
@@ -93,10 +111,18 @@ export default function SendMessage({route}) {
   };
 
   const renderMessageUser = (item, index) => {
-    const {message} = item;
+    const {message, createdAt, username} = item;
+    let marginSize: number = 5;
+    if (
+      listMessage[index - 1] &&
+      listMessage[index - 1].username === username &&
+      compareTimes(createdAt, listMessage[index - 1].createdAt)
+    ) {
+      marginSize = 1;
+    }
     return (
       <HStack
-        marginBottom={3}
+        marginTop={marginSize}
         justifyContent={'flex-start'}
         flexDirection={'row-reverse'}
         alignItems={'flex-end'}
@@ -128,7 +154,7 @@ export default function SendMessage({route}) {
             width: width,
             flexDirection: 'column-reverse',
           }}>
-          {listMessage ? (
+          {/* {listMessage ? (
             listMessage.map((e, index) => {
               if (e.username !== toUser) {
                 return <View key={index}>{renderMessageUser(e, index)}</View>;
@@ -138,7 +164,16 @@ export default function SendMessage({route}) {
             })
           ) : (
             <></>
-          )}
+          )} */}
+          <FlatList
+            data={listMessage}
+            renderItem={({item, index}) =>
+              item.username !== toUser
+                ? renderMessageUser(item, index)
+                : renderMessageMe(item, index)
+            }
+            keyExtractor={item => item.id}
+          />
         </View>
         <HStack marginBottom={5} marginTop={5} justifyContent={'center'}>
           <Avatar

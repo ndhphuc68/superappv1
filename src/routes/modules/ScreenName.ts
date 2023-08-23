@@ -6,4 +6,5 @@ export const ScreenName = {
   editProfile: 'EditProfile',
   message: 'Message',
   sendMessage: 'SendMessage',
+  calender: 'Calender',
 };

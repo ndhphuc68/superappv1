@@ -30,34 +30,19 @@ export default function HomeView() {
   const infoUser = useSelector(state => state.user.infoUser);
 
   useEffect(() => {
-    if (!infoUser) {
-      const handleGetInforUser = async () => {
-        const useName = await getUsername();
-        await getInfoApi(useName)
-          .then(res => {
-            if (res.success) {
-              dispatch(setInfoUser(res.data));
-            }
-          })
-          .catch(e => {
-            console.log(e);
-          });
-      };
-      const handleGetListUserMessage = async () => {
-        const useName = await getUsername();
-        await getListUserMessage(useName)
-          .then(res => {
-            if (res.success) {
-              dispatch(setListUserMessage(res.data));
-            }
-          })
-          .catch(e => {
-            console.log(e);
-          });
-      };
-      handleGetInforUser();
-      handleGetListUserMessage();
-    }
+    const handleGetListUserMessage = async () => {
+      const useName = await getUsername();
+      await getListUserMessage(useName)
+        .then(res => {
+          if (res.success) {
+            dispatch(setListUserMessage(res.data));
+          }
+        })
+        .catch(e => {
+          console.log(e);
+        });
+    };
+    handleGetListUserMessage();
   }, []);
 
   const renderHeaderHome = () => {
