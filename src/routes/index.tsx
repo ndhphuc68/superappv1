@@ -24,7 +24,9 @@ export default function Navigation() {
     } else {
       setIsLogin(true);
     }
-    setIsLoading(false);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
   };
 
   useEffect(() => {
