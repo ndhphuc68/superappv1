@@ -1,8 +1,9 @@
 import axios from 'axios';
 import {getToken} from '../utils/storage';
+import {BASE_URL_API} from '../constants';
 
 const axiosInstance = axios.create({
-  baseURL: 'http://192.168.1.19:3001/api/v1',
+  baseURL: BASE_URL_API,
   headers: {
     'Access-Control-Allow-Origin': '*',
   },

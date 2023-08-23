@@ -5,24 +5,21 @@ import {VStack, Input, Icon, Pressable, Button} from 'native-base';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {Colors} from '../../theme/colors';
 import {useDispatch} from 'react-redux';
-// import {setAuth, setUserNameLogin} from '../../redux/modules/auth';
+import {setAuth, setUserNameLogin} from '../../redux/modules/auth';
 import {useNavigation} from '@react-navigation/core';
-// import {ScreenName} from '../../routes/modules/ScreenName';
-// import messaging from '@react-native-firebase/messaging';
-// import {loginApi} from '../../helper/modules/auth';
-// import {useMutation} from '@tanstack/react-query';
-// import {saveToken, saveUsername} from '../../utils/storage';
-// import {showToastError} from '../../utils/toast';
+import {ScreenName} from '../../routes/modules/ScreenName';
+import messaging from '@react-native-firebase/messaging';
+import {loginApi} from '../../helper/modules/auth';
+import {useMutation} from '@tanstack/react-query';
+import {saveToken, saveUsername} from '../../utils/storage';
+import {showToastError} from '../../utils/toast';
 import {useTranslation} from 'react-i18next';
-// import {getInfoApi} from '../../helper/modules/user';
-// import {setInfoUser} from '../../redux/modules/user';
-import {useAuth} from '../../contexts/Auth';
+import {getInfoApi} from '../../helper/modules/user';
+import {setInfoUser} from '../../redux/modules/user';
 export default function LoginView() {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const {t} = useTranslation();
-
-  const auth = useAuth();
 
   const [show, setShow] = useState();
   const [username, setUsername] = useState('');
@@ -35,8 +32,8 @@ export default function LoginView() {
     if (username && password) {
       const tokenFM = await messaging().getToken();
       console.log('tokenFM', tokenFM);
-      await auth.signIn({username, password, token: tokenFM});
-      // loginAction({username, password, token: tokenFM});
+      // await auth.signIn({username, password, token: tokenFM});
+      loginAction({username, password, token: tokenFM});
     } else {
       // if (!username) {
       //   showToastError(data.message);
@@ -44,33 +41,33 @@ export default function LoginView() {
     }
   };
 
-  // const {mutate: loginAction} = useMutation({
-  //   mutationFn: data => loginApi(data),
-  //   onSuccess: async res => {
-  //     const {data} = res;
-  //     if (data.success) {
-  //       await getInfoApi(username)
-  //         .then(res => {
-  //           if (res.success) {
-  //             dispatch(setInfoUser(res.data));
-  //           }
-  //         })
-  //         .catch(e => {
-  //           console.log(e);
-  //         });
-  //       await saveToken(data.data.token);
-  //       await saveUsername(username);
-  //       dispatch(setAuth(true));
-  //       dispatch(setUserNameLogin(data.data.username));
-  //       navigation.navigate(ScreenName.bottomtab);
-  //     } else {
-  //       showToastError(data.message);
-  //     }
-  //   },
-  //   onError: error => {
-  //     console.log(error);
-  //   },
-  // });
+  const {mutate: loginAction} = useMutation({
+    mutationFn: data => loginApi(data),
+    onSuccess: async res => {
+      const {data} = res;
+      if (data.success) {
+        await getInfoApi(username)
+          .then(res => {
+            if (res.success) {
+              dispatch(setInfoUser(res.data));
+            }
+          })
+          .catch(e => {
+            console.log(e);
+          });
+        await saveToken(data.data.token);
+        await saveUsername(username);
+        dispatch(setAuth(true));
+        dispatch(setUserNameLogin(data.data.username));
+        navigation.navigate(ScreenName.bottomtab);
+      } else {
+        showToastError(data.message);
+      }
+    },
+    onError: error => {
+      console.log(error);
+    },
+  });
 
   return (
     <View style={styles.container}>
