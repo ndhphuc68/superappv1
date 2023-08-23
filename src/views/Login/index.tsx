@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import {Image, StyleSheet, Text, View, Keyboard} from 'react-native';
 import React, {useState} from 'react';
 import {Images} from '../../theme/image';
@@ -16,7 +17,7 @@ import {showToastError} from '../../utils/toast';
 import {useTranslation} from 'react-i18next';
 import {getInfoApi} from '../../helper/modules/user';
 import {setInfoUser} from '../../redux/modules/user';
-export default function LoginView() {
+export default function LoginView(props) {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const {t} = useTranslation();
@@ -28,16 +29,17 @@ export default function LoginView() {
 
   const handleLogin = async () => {
     Keyboard.dismiss();
-    setIsLoading(false);
+    setIsLoading(true);
     if (username && password) {
       const tokenFM = await messaging().getToken();
-      console.log('tokenFM', tokenFM);
-      // await auth.signIn({username, password, token: tokenFM});
       loginAction({username, password, token: tokenFM});
     } else {
-      // if (!username) {
-      //   showToastError(data.message);
-      // }
+      if (!username) {
+        showToastError(t('errorLogin', {name: t('username')}));
+      } else {
+        showToastError(t('errorLogin', {name: t('password')}));
+      }
+      setIsLoading(false);
     }
   };
 
@@ -59,7 +61,9 @@ export default function LoginView() {
         await saveUsername(username);
         dispatch(setAuth(true));
         dispatch(setUserNameLogin(data.data.username));
-        navigation.navigate(ScreenName.bottomtab);
+        setIsLoading(false);
+        props.parentCallback(false);
+        // navigation.navigate(ScreenName.bottomtab);
       } else {
         showToastError(data.message);
       }

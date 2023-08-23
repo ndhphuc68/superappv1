@@ -17,7 +17,7 @@ import {getListUserMessage} from '../../helper/modules/message';
 import {getUsername} from '../../utils/storage';
 import {setListUserMessage} from '../../redux/modules/message';
 
-const {width, height} = Dimensions.get('window');
+const {width} = Dimensions.get('window');
 
 export default function Message() {
   const navigation = useNavigation();
@@ -34,6 +34,8 @@ export default function Message() {
         if (res.success) {
           dispatch(setListUserMessage(res.data));
           setRefreshing(false);
+        } else {
+          dispatch(setListUserMessage([]));
         }
       })
       .catch(e => {

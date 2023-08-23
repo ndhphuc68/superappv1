@@ -15,16 +15,14 @@ const Stack = createNativeStackNavigator();
 export default function Navigation() {
   const [isLogin, setIsLogin] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+
   const getIsLogin = async () => {
     const token = await getToken();
     const username = await getUsername();
-    console.log(token, username);
-
     if (token && username) {
-      console.log(1);
       setIsLogin(false);
     } else {
-      setIsLogin(false);
+      setIsLogin(true);
     }
     setIsLoading(false);
   };
@@ -33,54 +31,49 @@ export default function Navigation() {
     getIsLogin();
   }, []);
 
+  const callbackFunctionLogin = (chilData: boolean) => {
+    setIsLogin(chilData);
+  };
+
   if (isLoading) {
     return <SplashScreen />;
-  }
-
-  return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        {isLogin ? (
+  } else if (isLogin) {
+    return (
+      <NavigationContainer>
+        <LoginView parentCallback={callbackFunctionLogin} />
+      </NavigationContainer>
+    );
+  } else {
+    return (
+      <NavigationContainer>
+        <Stack.Navigator>
           <Stack.Screen
             options={{headerShown: false}}
-            component={LoginView}
-            name={ScreenName.login}
+            name={ScreenName.bottomtab}
+            component={Tabbar}
           />
-        ) : (
-          <>
-            <Stack.Screen
-              options={{headerShown: false}}
-              component={LoginView}
-              name={ScreenName.login}
-            />
-            <Stack.Screen
-              options={{headerShown: false}}
-              name={ScreenName.bottomtab}
-              component={Tabbar}
-            />
-            <Stack.Screen
-              options={{headerShown: true}}
-              component={EditProfile}
-              name={ScreenName.editProfile}
-            />
-            <Stack.Screen
-              options={{headerShown: true}}
-              component={Message}
-              name={ScreenName.message}
-            />
-            <Stack.Screen
-              options={({route}) => ({
-                title: route.params.name,
-                headerShown: true,
-                headerTitleAlign: 'center',
-                headerBackTitleVisible: false,
-              })}
-              component={SendMessage}
-              name={ScreenName.sendMessage}
-            />
-          </>
-        )}
-      </Stack.Navigator>
-    </NavigationContainer>
-  );
+          <Stack.Screen
+            options={{headerShown: true}}
+            component={EditProfile}
+            name={ScreenName.editProfile}
+          />
+          <Stack.Screen
+            options={{headerShown: true}}
+            component={Message}
+            name={ScreenName.message}
+          />
+          <Stack.Screen
+            options={({route}) => ({
+              title: route.params.name,
+              headerShown: true,
+              headerTitleAlign: 'center',
+              headerBackTitleVisible: false,
+            })}
+            component={SendMessage}
+            name={ScreenName.sendMessage}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    );
+  }
 }
